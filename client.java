@@ -1,3 +1,9 @@
+/**************************************************************
+ * *  Filename: smallsh.c
+ * *  Coded by: Kevin To
+ * *  Purpose - Implementation of a shell.
+ * *
+ * ***************************************************************/
 import java.io.*;
 import java.net.*;
 
