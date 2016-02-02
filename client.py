@@ -20,8 +20,8 @@ if (not clienthelper.checkArgs(sys.argv)):
 TCP_IP = sys.argv[1]
 TCP_PORT = int(sys.argv[2]) 
 BUFFER_SIZE = 1024
-# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# s.connect((TCP_IP, TCP_PORT))
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((TCP_IP, TCP_PORT))
 
 # TODO - Put chat in looop
 # TODO - Make sure connection does not close
@@ -41,24 +41,30 @@ while True:
 
 		# Check if user wants to close connection
 		if userInput == "\quit" :
+			s.send("quit\n")
 			clienthelper.closeClient(s)
-			break
+			#clienthelper.closeClient(s)
 
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.connect((TCP_IP, TCP_PORT))
+		#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		#s.connect((TCP_IP, TCP_PORT))
 		s.send(userMessage)
 
 		print 'client - from server - ' + clienthelper.recv_timeout(s)
+		#s.send(userMessage)
+		#print 'client - from server - ' + clienthelper.recv_timeout(s)
 	except KeyboardInterrupt:
 		clienthelper.closeClient(s)
 		# s.close()
 		# sys.exit()
+	# finally:
+	# 	s.close()
 
-MESSAGE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lobortis massa et est tempor, vel finibus quam ultricies. Phasellus non neque eget purus sollicitudin dapibus. Maecenas vel enim in metus ornare bibendum. Aliquam consectetur ut ipsum et efficitur. Morbi ac convallis justo, quis convallis magna. Suspendisse sit amet gravida justo. Proin mollis, nisi et molestie sodales, elit risus vehicula erat, vitae luctus velit lorem ut nunc. Proin ac arcu hendrerit, varius dui sed orci aliquam.\n"
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
-s.send(MESSAGE)
+# MESSAGE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lobortis massa et est tempor, vel finibus quam ultricies. Phasellus non neque eget purus sollicitudin dapibus. Maecenas vel enim in metus ornare bibendum. Aliquam consectetur ut ipsum et efficitur. Morbi ac convallis justo, quis convallis magna. Suspendisse sit amet gravida justo. Proin mollis, nisi et molestie sodales, elit risus vehicula erat, vitae luctus velit lorem ut nunc. Proin ac arcu hendrerit, varius dui sed orci aliquam.\n"
+
+# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s.connect((TCP_IP, TCP_PORT))
+# s.send(MESSAGE)
 # data = s.recv(BUFFER_SIZE)
 # s.close()
 
@@ -67,5 +73,5 @@ s.send(MESSAGE)
 # print "test: ", data
 
 #get reply and print
-print 'client - ' + clienthelper.recv_timeout(s)
-s.close()
+# print 'client - ' + clienthelper.recv_timeout(s)
+# s.close()

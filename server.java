@@ -19,14 +19,24 @@ class server
 		String clientSentence;
 		String capitalizedSentence;
 		ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
-
+		Socket connectionSocket = welcomeSocket.accept();
+	       
+		
 		while(true)
 		{
-			Socket connectionSocket = welcomeSocket.accept();
+			// Needs to be here to refresh new connections
 			BufferedReader inFromClient = 
-				new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		       new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+	    	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+
 			clientSentence = inFromClient.readLine();
+			if (clientSentence.equals("quit"))
+			{
+				// Need to research why we need to accept again after quit
+				connectionSocket = welcomeSocket.accept();
+				continue;
+			}
+
 			System.out.println("Server - Received: " + clientSentence);
 			capitalizedSentence = clientSentence.toUpperCase() + '\n';
 			outToClient.writeBytes(capitalizedSentence);
