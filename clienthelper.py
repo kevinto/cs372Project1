@@ -60,3 +60,7 @@ def checkArgs(argv):
 		return False
 
 	return True
+
+def closeClient(s):
+    s.close()
+    sys.exit()
