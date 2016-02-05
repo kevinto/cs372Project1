@@ -15,7 +15,30 @@ import sys
 import struct
 import time
 
-def recv_timeout(the_socket,timeout=2):
+def closeClient(s):
+    s.close()
+    sys.exit()
+
+def initContact(argv):
+	TCP_IP = sys.argv[1]
+	TCP_PORT = int(sys.argv[2]) 
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect((TCP_IP, TCP_PORT))
+	return s
+
+def sendUserMsgToServer(s, handle):
+	# Get user message
+	userInput = raw_input(handle)
+	userMessage = handle + userInput + "\n"
+
+	# Check if user wants to close connection
+	if userInput == "\quit" :
+		s.send("quit\n")
+		closeClient(s)
+
+	s.send(userMessage)
+
+def receiveServerMsg(the_socket):
     # Make socket non blocking
     the_socket.setblocking(0)
      
@@ -32,10 +55,6 @@ def recv_timeout(the_socket,timeout=2):
         # if total_data and time.time()-begin > timeout:
         if total_data and foundNull:
             break
-         
-        #if you got no data at all, wait a little longer, twice the timeout
-        # elif time.time()-begin > timeout*2:
-        #     break
          
         #recv something
         try:
@@ -74,6 +93,3 @@ def checkArgs(argv):
 
 	return True
 
-def closeClient(s):
-    s.close()
-    sys.exit()

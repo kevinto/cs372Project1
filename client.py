@@ -17,11 +17,7 @@ if (not clienthelper.checkArgs(sys.argv)):
 	sys.exit()
 
 # Setup socket connection
-TCP_IP = sys.argv[1]
-TCP_PORT = int(sys.argv[2]) 
-BUFFER_SIZE = 1024
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
+s = clienthelper.initContact(sys.argv)
 
 handle = ""
 userMessage = ""
@@ -34,18 +30,9 @@ while True:
 			handle = raw_input("Enter your handle: ")
 			handle += "> "
 
-		# Get user message
-		userInput = raw_input(handle)
-		userMessage = handle + userInput + "\n"
-
-		# Check if user wants to close connection
-		if userInput == "\quit" :
-			s.send("quit\n")
-			clienthelper.closeClient(s)
-
-		s.send(userMessage)
+		clienthelper.sendUserMsgToServer(s, handle)
 		
-		serverMessage = clienthelper.recv_timeout(s)
+		serverMessage = clienthelper.receiveServerMsg(s)
 
 		# Check if server wants to close the connection
 		if "\quit\n" in serverMessage:
