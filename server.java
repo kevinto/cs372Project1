@@ -18,38 +18,40 @@ class server
 		}
 
 		// Set up server socket
-		// String clientSentence;
-		// String capitalizedSentence;
-		// ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
-		// Socket connectionSocket = welcomeSocket.accept();
+		String clientSentence;
+		String capitalizedSentence;
+		ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
+		Socket connectionSocket = welcomeSocket.accept();
 	    
-	    // TODO - incorporate this segment into our code
 	    // Set up server user input
 	    Scanner reader = new Scanner(System.in);
-	    System.out.print("> ");
-	    String message = "ServerUser> " + reader.nextLine();
-	    System.out.println(message);
-		return;
 
-		// while(true)
-		// {
-		// 	// Needs to be here to refresh new connections
-		// 	BufferedReader inFromClient = 
-		//        new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-	 //    	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+	    String message = "";
+		while(true)
+		{
+			// Needs to be here to refresh new connections
+			BufferedReader inFromClient = 
+		       new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+	    	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 
-		// 	clientSentence = inFromClient.readLine();
-		// 	if (clientSentence.equals("quit"))
-		// 	{
-		// 		// Need to research why we need to accept again after quit
-		// 		connectionSocket = welcomeSocket.accept();
-		// 		continue;
-		// 	}
+			clientSentence = inFromClient.readLine();
+			if (clientSentence.equals("quit"))
+			{
+				// Need to research why we need to accept again after quit
+				connectionSocket = welcomeSocket.accept();
+				continue;
+			}
 
-		// 	// System.out.println("Server - Received: " + clientSentence);
-		// 	capitalizedSentence = clientSentence.toUpperCase() + '\n';
-		// 	outToClient.writeBytes(capitalizedSentence);
-		// }
+			// Print client message
+			System.out.println(clientSentence);
+
+			// Get server message from user
+		   	System.out.print("ServerUser> ");
+ 		   	message = "ServerUser> " + reader.nextLine();
+ 		   	message += '\n';
+
+			outToClient.writeBytes(message);
+		}
 	}
 
 	// Purpose: To validate server command line args
