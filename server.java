@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 class server
 {
+	// This is the main entry point
 	public static void main(String argv[]) throws Exception
 	{
 		if (!serverArgsValid(argv))
@@ -17,24 +18,29 @@ class server
 			return;
 		}
 
-		// Set up server socket
-		String clientSentence;
-		String capitalizedSentence;
+		startUpServer(argv);
+	}
+
+	// Purpose: To run the server
+	// Params:
+	//		String argv[] - command line args 
+	private static void startUpServer(String argv[]) throws Exception
+	{
+		// Set up sockets
 		ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
 		Socket connectionSocket = welcomeSocket.accept();
 	    
 	    // Set up server user input
 	    Scanner reader = new Scanner(System.in);
 
+		String clientSentence;
 	    String message = "";
 		while(true)
 		{
-			// Needs to be here to refresh new connections
-			BufferedReader inFromClient = 
-		       new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-	    	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+	    	DataOutputStream clientSender = new DataOutputStream(connectionSocket.getOutputStream());
+			
+	    	clientSentence = receiveMessage(connectionSocket);
 
-			clientSentence = inFromClient.readLine();
 			if (clientSentence.equals("quit"))
 			{
 				// Need to research why we need to accept again after quit
@@ -50,10 +56,21 @@ class server
  		   	message = "ServerUser> " + reader.nextLine();
  		   	message += '\n';
 
-			outToClient.writeBytes(message);
+			clientSender.writeBytes(message);
 		}
 	}
 
+	// Purpose: To receive the message from the socket input stream
+	// Params:
+	//		Socket connectionSocket - The socket to get the input stream from
+	private static String receiveMessage(Socket connectionSocket) throws Exception
+	{
+		BufferedReader clientReader = 
+			new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+
+		return clientReader.readLine();
+	}
+	
 	// Purpose: To validate server command line args
 	// Params:
 	//		String argv[] - command line args 

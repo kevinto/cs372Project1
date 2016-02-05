@@ -4,6 +4,12 @@
  Purpose - [CS372 Project 1] - File contains the functions
            the client code can use.
 '''
+'''
+ Filename: client.py
+ Coded by: Kevin To
+ Purpose - [CS372 Project 1] - File contains helper methods for the 
+                               client code. 
+ '''
 import socket
 import sys
 import struct
