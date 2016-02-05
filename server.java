@@ -29,16 +29,11 @@ class server
 		// Set up sockets
 		ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
 		Socket connectionSocket = welcomeSocket.accept();
-	    
-	    // Set up server user input
-	    Scanner reader = new Scanner(System.in);
 
 		String clientSentence;
 	    String message = "";
 		while(true)
 		{
-	    	DataOutputStream clientSender = new DataOutputStream(connectionSocket.getOutputStream());
-			
 	    	clientSentence = receiveMessage(connectionSocket);
 
 			if (clientSentence.equals("quit"))
@@ -48,15 +43,12 @@ class server
 				continue;
 			}
 
-			// Print client message
+			// Print client message in terminal
 			System.out.println(clientSentence);
 
-			// Get server message from user
-		   	System.out.print("ServerUser> ");
- 		   	message = "ServerUser> " + reader.nextLine();
- 		   	message += '\n';
+			message = getServerUserInput();
 
-			clientSender.writeBytes(message);
+ 		   	sendMessage(connectionSocket, message);
 		}
 	}
 
@@ -70,7 +62,29 @@ class server
 
 		return clientReader.readLine();
 	}
-	
+
+	// Purpose: To send the message to the client
+	// Params:
+	//		Socket connectionSocket - The socket to get the ouput stream from
+	//		String message - The message to send
+	private static void sendMessage(Socket connectionSocket, String message) throws Exception
+	{
+	    DataOutputStream clientSender = new DataOutputStream(connectionSocket.getOutputStream());
+
+		clientSender.writeBytes(message);
+	}
+
+	// Purpose: To get the message to send from the server user
+	private static String getServerUserInput() throws Exception
+	{
+	    Scanner reader = new Scanner(System.in);
+
+		System.out.print("ServerUser> ");
+
+ 		String message = "ServerUser> " + reader.nextLine();
+ 		return message + '\n';
+	}
+
 	// Purpose: To validate server command line args
 	// Params:
 	//		String argv[] - command line args 
