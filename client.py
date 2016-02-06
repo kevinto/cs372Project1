@@ -36,12 +36,9 @@ while True:
 
 		# Check if server wants to close the connection
 		if "\quit\n" in serverMessage:
-			s.send("quit\n")
 			clienthelper.closeClient(s)
 
 		print serverMessage,
 
 	except KeyboardInterrupt:
 		clienthelper.closeClient(s)
-
-# MESSAGE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lobortis massa et est tempor, vel finibus quam ultricies. Phasellus non neque eget purus sollicitudin dapibus. Maecenas vel enim in metus ornare bibendum. Aliquam consectetur ut ipsum et efficitur. Morbi ac convallis justo, quis convallis magna. Suspendisse sit amet gravida justo. Proin mollis, nisi et molestie sodales, elit risus vehicula erat, vitae luctus velit lorem ut nunc. Proin ac arcu hendrerit, varius dui sed orci aliquam.\n"

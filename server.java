@@ -13,6 +13,8 @@ class server
 	// This is the main entry point
 	public static void main(String argv[]) throws Exception
 	{
+
+
 		if (!serverArgsValid(argv))
 		{
 			return;
@@ -24,37 +26,53 @@ class server
 	// Purpose: To run the server
 	// Params:
 	//		String argv[] - command line args 
+	// Reference: http://cs.lmu.edu/~ray/notes/javanetexamples/
 	private static void startUpServer(String argv[]) throws Exception
 	{
+		System.out.println("Server ready and accepting connections...");
+
 		// Set up sockets
-		ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
-		Socket connectionSocket = welcomeSocket.accept();
-
-		String clientSentence;
-	    String message = "";
-		while(true)
+		try
 		{
-	    	clientSentence = receiveMessage(connectionSocket);
+			ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
+			Socket connectionSocket = welcomeSocket.accept();
 
-			if (clientSentence.equals("quit"))
+			System.out.println("Connected to a client. Waiting for message...");
+
+			String clientSentence;
+		    String message = "";
+			while(true)
 			{
-				// Need to research why we need to accept again after quit
-				connectionSocket = welcomeSocket.accept();
-				continue;
+		    	clientSentence = receiveMessage(connectionSocket);
+
+				if (clientSentence.equals("quit"))
+				{
+					System.out.println("Server ready and accepting connections...");
+					
+					// Need to research why we need to accept again after quit
+					connectionSocket = welcomeSocket.accept();
+					continue;
+				}
+
+				// Print client message in terminal
+				System.out.println(clientSentence);
+
+				message = getServerUserInput();
+
+	 		   	sendMessage(connectionSocket, message);
 			}
-
-			// Print client message in terminal
-			System.out.println(clientSentence);
-
-			message = getServerUserInput();
-
- 		   	sendMessage(connectionSocket, message);
+		}
+		catch (BindException e)
+		{
+			System.out.println("Port is already in use. Pick another port number.");
+			return;
 		}
 	}
 
 	// Purpose: To receive the message from the socket input stream
 	// Params:
 	//		Socket connectionSocket - The socket to get the input stream from
+	// Reference: http://cs.lmu.edu/~ray/notes/javanetexamples/
 	private static String receiveMessage(Socket connectionSocket) throws Exception
 	{
 		BufferedReader clientReader = 
@@ -67,6 +85,7 @@ class server
 	// Params:
 	//		Socket connectionSocket - The socket to get the ouput stream from
 	//		String message - The message to send
+	// Reference: http://journals.ecs.soton.ac.uk/java/tutorial/networking/sockets/readingWriting.html
 	private static void sendMessage(Socket connectionSocket, String message) throws Exception
 	{
 	    DataOutputStream clientSender = new DataOutputStream(connectionSocket.getOutputStream());

@@ -14,12 +14,18 @@ import time
 # Params:
 #		socket: Object that holds the server connection info
 def closeClient(s):
-    s.close()
-    sys.exit()
+    try:
+        s.send("quit\n")
+        s.close()
+        sys.exit()
+    except:
+        print "Server disconnected..."
+        sys.exit()
 
 # Purpose: Set up connection to server
 # Params:
 #		argv: string array of parameters passed into clint.py
+# Reference: http://www.bogotobogo.com/python/python_network_programming_server_client.php
 def initContact(argv):
 	tcpIp = sys.argv[1]
 	tcpPort = int(sys.argv[2]) 
@@ -34,25 +40,31 @@ def initContact(argv):
 #		handle: String containing the client user name
 def sendUserMsgToServer(s, handle):
 	# Get user message
-	userInput = raw_input(handle)
-	userMessage = handle + userInput + "\n"
+    userInput = raw_input(handle)
+    userMessage = handle + userInput + "\n"
 
-	# Check if user wants to close connection
-	if userInput == "\quit" :
-		s.send("quit\n")
-		closeClient(s)
+    try:
+        # Check if user wants to close connection
+        if userInput == "\quit" :
+            s.send("quit\n")
+            s.close()
+            sys.exit()
 
-	s.send(userMessage)
+        s.send(userMessage)
+    except:
+        print "Server disconnected..."
+        sys.exit()
 
 # Purpose: To wait for the server message to come
 # Params:
-#		socket: Object that holds the server connection info
-def receiveServerMsg(socket):
+#		s: Object that holds the server connection info
+# Reference: http://www.binarytides.com/receive-full-data-with-the-recv-socket-function-in-python/
+def receiveServerMsg(s):
     # Set socket to non-blocking. This enables the while loop below
     # to keep calling recv to monitor for any data received. This fixes
     # the problem where we are only receiving partial messages from the 
     # server. We will only stop receiving when we receive a null terminator.
-    socket.setblocking(0)
+    s.setblocking(0)
     
     data=''
     foundNull = False 
@@ -64,7 +76,7 @@ def receiveServerMsg(socket):
             break
          
         try:
-            data = socket.recv(8192)
+            data = s.recv(8192)
             if data:
             	# Found data, append to array
                 total_data.append(data)
@@ -72,9 +84,14 @@ def receiveServerMsg(socket):
                 # Check for null termination
                 if '\n' in data:
                     foundNull = True
+
+            # Check if connection is terminated from client end
+            # Reference: http://stackoverflow.com/questions/5686490/detect-socket-hangup-without-sending-or-receiving
+            if len(data) == 0:
+            	return "\quit\n"
         except:
             pass
-    
+
     # Return string constructed from data array 
     return ''.join(total_data)
 
@@ -100,4 +117,3 @@ def checkArgs(argv):
 		return False
 
 	return True
-
